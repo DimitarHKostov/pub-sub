@@ -21,7 +21,7 @@ func pricePublisher(broker *pubsub.Broker) {
 	for {
 		topic := topics[i%len(topics)].String()
 		msg := fmt.Sprintf("%d", rand.Intn(maxPrice-minPrice+1)+minPrice)
-		fmt.Printf("-*- New offer was generated for destination {%s}: {%s$}\n", topic, msg)
+		fmt.Printf("\n-*- New offer: {%s$} for {%s}: \n", msg, topic)
 
 		go broker.Publish(topic, msg)
 

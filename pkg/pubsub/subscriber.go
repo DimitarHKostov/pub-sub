@@ -65,7 +65,7 @@ func (s *Subscriber) Signal(msg *Message) {
 func (s *Subscriber) Listen() {
 	for {
 		if msg, ok := <-s.messages; ok {
-			fmt.Printf("Subscriber {%s}, received offer: {%s$} from destination: {%s}\n", s.id, msg.GetMessageBody(), msg.GetTopic())
+			fmt.Printf("{%s}, received offer: {%s$} for destination: {%s}\n", s.id, msg.GetMessageBody(), msg.GetTopic())
 		}
 	}
 }

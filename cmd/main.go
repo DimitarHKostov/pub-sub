@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	minPrice = 30
-	maxPrice = 100
+	minPrice          = 30
+	maxPrice          = 100
 	timeBetweenOffers = 10 * time.Second
 )
 
@@ -20,7 +20,7 @@ func pricePublisher(broker *pubsub.Broker) {
 
 	for {
 		topic := topics[i%len(topics)].String()
-		msg := fmt.Sprintf("%d", generateRandomPrice(minPrice, maxPrice))
+		msg := fmt.Sprintf("%d", rand.Intn(maxPrice-minPrice+1)+minPrice)
 		fmt.Printf("-*- New offer was generated for destination {%s}: {%s$}\n", topic, msg)
 
 		go broker.Publish(topic, msg)
@@ -28,10 +28,6 @@ func pricePublisher(broker *pubsub.Broker) {
 		i++
 		time.Sleep(timeBetweenOffers)
 	}
-}
-
-func generateRandomPrice(min, max int) int {
-	return rand.Intn(max-min+1) + min
 }
 
 func addSubscriberForTopics(broker *pubsub.Broker, s *pubsub.Subscriber, topics []pubsub.Topic) {

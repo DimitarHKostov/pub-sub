@@ -13,7 +13,7 @@ type Subscriber struct {
 	mutex    sync.RWMutex
 }
 
-func CreateNewSubscriber(name string) *Subscriber {
+func NewSubscriber(name string) *Subscriber {
 	return &Subscriber{
 		id:       name,
 		messages: make(chan *Message),

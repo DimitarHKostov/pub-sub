@@ -20,20 +20,11 @@ func NewBroker() *Broker {
 	}
 }
 
-func (b *Broker) AddSubscriber(name string) *Subscriber {
-	b.mut.Lock()
-	defer b.mut.Unlock()
-	s := CreateNewSubscriber(name)
-	b.subscribers[name] = s
-	
-	return s
-}
-
 func (b *Broker) RemoveSubscriber(s *Subscriber) {
 	for topic := range s.topics {
 		b.Unsubscribe(s, topic)
 	}
-	
+
 	b.mut.Lock()
 	delete(b.subscribers, s.id)
 	b.mut.Unlock()
@@ -44,7 +35,7 @@ func (b *Broker) Broadcast(msg string, topics []string) {
 	for _, topic := range topics {
 		for _, s := range b.topics[topic] {
 			m := NewMessage(msg, topic)
-			
+
 			go (func(s *Subscriber) {
 				s.Signal(m)
 			})(s)
@@ -61,13 +52,14 @@ func (b *Broker) GetSubscribers(topic string) int {
 func (b *Broker) Subscribe(s *Subscriber, topic string) {
 	b.mut.Lock()
 	defer b.mut.Unlock()
-	
+
 	if b.topics[topic] == nil {
 		b.topics[topic] = Subscribers{}
 	}
 
 	s.AddTopic(topic)
 	b.topics[topic][s.id] = s
+	b.subscribers[s.id] = s
 	fmt.Printf("{%s} subscribed for destination: {%s}\n", s.id, topic)
 }
 
@@ -84,7 +76,7 @@ func (b *Broker) Publish(topic string, msg string) {
 	b.mut.RLock()
 	bTopics := b.topics[topic]
 	b.mut.RUnlock()
-	
+
 	for _, s := range bTopics {
 		m := NewMessage(msg, topic)
 		if !s.active {
